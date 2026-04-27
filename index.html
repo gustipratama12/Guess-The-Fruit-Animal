@@ -47,6 +47,11 @@
       font-weight: bold;
       font-size: 18px;
     }
+
+    #score {
+      margin-top: 10px;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
@@ -54,52 +59,43 @@
   <h1>🎯 Guess the Animal & Fruit</h1>
 
   <div id="game-container">
-    <p id="clue">Clue will appear here</p>
-    <img id="image" src="" alt="guess image">
+    <p id="clue"></p>
+    <img id="image" src="">
     <br>
     <input type="text" id="answer" placeholder="Type your answer...">
     <br>
     <button onclick="checkAnswer()">Submit</button>
-    <button onclick="nextQuestion()">Next</button>
     <p id="result"></p>
+    <p id="score"></p>
   </div>
 
   <script>
     const questions = [
-      {
-        clue: "This animal is big, has a long trunk",
-        answer: "elephant",
-        image: "https://cdn-icons-png.flaticon.com/512/1998/1998610.png"
-      },
-      {
-        clue: "This animal says meow",
-        answer: "cat",
-        image: "https://cdn-icons-png.flaticon.com/512/616/616408.png"
-      },
-      {
-        clue: "Yellow fruit that monkeys love",
-        answer: "banana",
-        image: "https://cdn-icons-png.flaticon.com/512/590/590685.png"
-      },
-      {
-        clue: "Red fruit, often used in juice",
-        answer: "apple",
-        image: "https://cdn-icons-png.flaticon.com/512/415/415682.png"
-      },
-      {
-        clue: "Green outside, red inside, many seeds",
-        answer: "watermelon",
-        image: "https://cdn-icons-png.flaticon.com/512/590/590695.png"
-      }
+      { clue: "Big animal with long trunk", answer: "elephant", image: "https://cdn-icons-png.flaticon.com/512/1998/1998610.png" },
+      { clue: "Says meow", answer: "cat", image: "https://cdn-icons-png.flaticon.com/512/616/616408.png" },
+      { clue: "King of the jungle", answer: "lion", image: "https://cdn-icons-png.flaticon.com/512/616/616430.png" },
+      { clue: "Black and white, eats bamboo", answer: "panda", image: "https://cdn-icons-png.flaticon.com/512/616/616412.png" },
+      { clue: "Can fly and says tweet", answer: "bird", image: "https://cdn-icons-png.flaticon.com/512/616/616490.png" },
+      { clue: "Yellow fruit monkeys love", answer: "banana", image: "https://cdn-icons-png.flaticon.com/512/590/590685.png" },
+      { clue: "Red fruit keeps doctor away", answer: "apple", image: "https://cdn-icons-png.flaticon.com/512/415/415682.png" },
+      { clue: "Green outside, red inside", answer: "watermelon", image: "https://cdn-icons-png.flaticon.com/512/590/590695.png" },
+      { clue: "Small purple fruit", answer: "grape", image: "https://cdn-icons-png.flaticon.com/512/590/590682.png" },
+      { clue: "Orange fruit, same name as color", answer: "orange", image: "https://cdn-icons-png.flaticon.com/512/590/590684.png" }
     ];
 
     let currentIndex = 0;
+    let score = 0;
 
     function loadQuestion() {
-      document.getElementById("clue").innerText = questions[currentIndex].clue;
-      document.getElementById("image").src = questions[currentIndex].image;
-      document.getElementById("answer").value = "";
-      document.getElementById("result").innerText = "";
+      if (currentIndex < questions.length) {
+        document.getElementById("clue").innerText = questions[currentIndex].clue;
+        document.getElementById("image").src = questions[currentIndex].image;
+        document.getElementById("answer").value = "";
+        document.getElementById("result").innerText = "";
+        document.getElementById("score").innerText = "Score: " + score;
+      } else {
+        endGame();
+      }
     }
 
     function checkAnswer() {
@@ -107,20 +103,34 @@
       let correctAnswer = questions[currentIndex].answer;
 
       if (userAnswer === correctAnswer) {
+        score++;
         document.getElementById("result").innerText = "✅ Correct!";
         document.getElementById("result").style.color = "green";
       } else {
-        document.getElementById("result").innerText = "❌ Try again!";
+        document.getElementById("result").innerText = "❌ Wrong! Answer: " + correctAnswer;
         document.getElementById("result").style.color = "red";
       }
+
+      setTimeout(() => {
+        currentIndex++;
+        loadQuestion();
+      }, 1000); // auto next after 1 second
     }
 
-    function nextQuestion() {
-      currentIndex = (currentIndex + 1) % questions.length;
-      loadQuestion();
+    function endGame() {
+      document.getElementById("game-container").innerHTML = `
+        <h2>🎉 Game Finished!</h2>
+        <p>Your Score: ${score} / ${questions.length}</p>
+        <button onclick="restartGame()">Play Again</button>
+      `;
     }
 
-    // Load first question
+    function restartGame() {
+      currentIndex = 0;
+      score = 0;
+      location.reload();
+    }
+
     loadQuestion();
   </script>
 
